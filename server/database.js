@@ -38,10 +38,25 @@ class DataBase {
             })
         };
 
-        // map over forEach since it returns
         let actions = films.map(populateFilmWithActors);
 
         // we now have a promises array and we want to wait for it
+        return Promise.all(actions);
+    }
+
+    insertActors(film, db, connection) {
+        let enqueeActorsInsertion = function (actor) {
+            return new Promise((resolve) => {
+                    let insert = `INSERT INTO actorfilm (filmId, name)`;
+                    let values = `VALUES ('${film.id}', '${actor}')`;
+                    db.executeQuery(`${insert} ${values}`, connection).then(() => {
+                        resolve();
+                    })
+            })
+        };
+
+        let actions = film.actors.map(enqueeActorsInsertion);
+
         return Promise.all(actions);
     }
 }

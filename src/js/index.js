@@ -15,15 +15,6 @@ import getMessage from './connection.test';
 
 getMessage();
 
-export default class Hello extends Component {
-    render() {
-        return (
-            <div>
-                Hello from react es6
-            </div>
-        );
-    }
-}
 render((
     <BrowserRouter>
         <App/>

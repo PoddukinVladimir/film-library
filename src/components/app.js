@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {render} from 'react-dom';
 import Main from './main';
+
 import Header from './header';
 
 class App extends Component {

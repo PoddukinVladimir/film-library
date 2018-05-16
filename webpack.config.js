@@ -13,7 +13,8 @@ module.exports = {
     entry: path.join(paths.JS, 'index.js'),
     output: {
         path: paths.DIST,
-        filename: 'index.bundle.js'
+        filename: 'index.bundle.js',
+        publicPath: '/'
     },
     mode: 'development',
     devtool: "source-map",
@@ -27,6 +28,7 @@ module.exports = {
     // uses "src" folder as a starting point
     devServer: {
         contentBase: paths.SRC,
+        historyApiFallback: true
     },
     module: {
         rules: [

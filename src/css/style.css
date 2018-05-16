@@ -1,3 +1,7 @@
+html {
+    overflow: scroll;
+}
+
 body {
     background: #f9fafb;
     font-family: Helvetica, Arial, sans-serif;
@@ -41,7 +45,27 @@ body {
     align-items: center;
 }
 
+.row-container-row:hover {
+    cursor: pointer;
+    background-color: #e6e6e6;
+}
+
+.row-container-row--head {
+    background-color: #43BAC0;
+    color: white;
+    height: 60px;
+}
+
+.row-container-row--head:hover {
+    background-color: #43BAC0;
+}
+
 .row-container-row-info {
+    background-color: #a0cacf;
+}
+
+.row-container-row-info:hover {
+    cursor: auto;
     background-color: #a0cacf;
 }
 
@@ -62,18 +86,24 @@ body {
     list-style: none;
 }
 
-.info-row-container {
-    width: 100%;
+.film-name-cell > div {
+    display: inline-block;
 }
 
-.column-heading {
-     background-color: #43BAC0;
-     color: white;
-     padding: 1em;
- }
+.film-name-cell > div > a {
+    margin-right: 10px;
+}
 
-.row-container-cell--heading {
-    display: none;
+.film-name-cell > div > span {
+    vertical-align: super;
+}
+
+.film-name-cell > div:hover a > .ion-android-add-circle {
+    color: #00a600;
+}
+
+.info-row-container {
+    width: 100%;
 }
 
 .row-container-cell--content a {
@@ -104,22 +134,14 @@ body {
     text-align: center;
 }
 
-.loader {
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    margin: auto;
-    border: 16px solid #f3f3f3;
-    border-radius: 50%;
-    border-top: 16px solid darkgray;
-    width: 100px;
-    height: 100px;
-    -webkit-animation: spin 2s linear infinite;
-    animation: spin 2s linear infinite;
+.ion-android-cancel:hover {
+     color: red;
 }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+.ion-help-circled:hover {
+    color: #43BAC0;
+}
+
+.ion-android-add-circle {
+    color: darkgreen;
 }

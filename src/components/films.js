@@ -7,12 +7,14 @@ class Films extends Component {
     constructor() {
         super();
         this.state = {
+            isMounted: false,
             films: [],
-            isLoaderVisible: false
+            isLoaderVisible: false,
         }
     }
 
     componentDidMount() {
+        this.setState({isMounted: true});
         this.setState({isLoaderVisible: true});
 
         const url = 'http://localhost:3000/films';
@@ -21,8 +23,15 @@ class Films extends Component {
                 return response.text();
             })
             .then((data) => {
-                this.setState({films: JSON.parse(data), isLoaderVisible: false});
+                if (this.state.isMounted) {
+                    this.setState({films: JSON.parse(data), isLoaderVisible: false});
+                }
             });
+    }
+
+    componentWillUnmount() {
+        // in case view changes before asynchronous fetch tasks are complete
+        this.setState({isMounted: true});
     }
 
     submitFile = (event) => {
@@ -48,21 +57,33 @@ class Films extends Component {
 
     render() {
         return (
-            <div className="form-container">
+            <div className="loader-container">
                 <form className="form" onSubmit={this.submitFile}>
-                <input id="file" type="file" name="file"/>
-                <button type="submit">Send file</button>
+                    <input id="file" type="file" name="file"/>
+                    <button type="submit">Send file</button>
                 </form>
                 <div className="films-container">
                     <div className="row-container">
                         <div className="row-container-row row-container-row--head">
-                            <div className="row-container-cell film-name-cell column-heading">Title</div>
-                            <div className="row-container-cell film-info-cell column-heading">Info</div>
+                            <div
+                                className="row-container-cell row-container-cell--content film-name-cell">
+                                {this.props.redactorMode ?
+                                    <div>
+                                        <a href="">
+                                            <i onClick={this.handleInfoIconClick}
+                                               className={"ion-android-add-circle"}/>
+                                        </a>
+                                        <span>Add new film</span>
+                                    </div> : <span>Title</span>}
+                            </div>
+                            <div className="row-container-cell film-info-cell">
+                                {this.props.redactorMode ? <span>Delete</span> : <span>Info</span>}
+                            </div>
                         </div>
                     </div>
                     {this.state.films.map((film, index) => {
                         return (
-                            <Film key={index} film={film}/>
+                            <Film redactorMode={this.props.redactorMode} key={index} film={film}/>
                         )
                     })}
                 </div>

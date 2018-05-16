@@ -8,8 +8,8 @@ class Header extends Component {
         super();
         this.state = {
             links: [
-                {href: '#', title: 'Home', to: '/'},
-                {href: '#', title: 'Redactor', to: '/films'}
+                {title: 'Home', to: '/'},
+                {title: 'Redactor', to: '/redactor'}
             ],
             activeIndex: 0
         }

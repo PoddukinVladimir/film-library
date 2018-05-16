@@ -18,9 +18,17 @@ class Film extends Component {
         });
     };
 
-    render() {
-        const {height} = this.state;
+    handleInfoIconClick = () => {
+        if (this.props.redactorMode) {
 
+        } else {
+            this.toggleInfo();
+        }
+    };
+
+    render() {
+        // used for row expand animation
+        const {height} = this.state;
         return (
             <div className="row-container">
                 <div className="row-container-row">
@@ -28,19 +36,22 @@ class Film extends Component {
                         <span className="main-title">{this.props.film.title}</span>
                     </div>
                     <div className="row-container-cell film-info-cell">
-                        <div className="row-container-cell--content access-link-content">
+                        <div className="row-container-cell--content">
                             <a href="#0">
-                                <i onClick={this.toggleInfo} className="ion-help-circled" title="Show info"/>
+                                <i onClick={this.handleInfoIconClick} title="Show info"
+                                   className={this.props.redactorMode ? "ion-android-cancel" : "ion-help-circled"}/>
                             </a>
                         </div>
                     </div>
                 </div>
-                <AnimateHeight duration={ 1000 }
-                               height={ height }
-                               className="info-row-container"
-                               contentClassName="row-container">
-                    <InfoRow film={this.props.film}/>
-                </AnimateHeight>
+                {/* Do not show info rows in redactor mode */}
+                {this.props.redactorMode ? null :
+                    <AnimateHeight duration={ 1000 }
+                                   height={ height }
+                                   className="info-row-container"
+                                   contentClassName="row-container">
+                        <InfoRow film={this.props.film}/>
+                    </AnimateHeight>}
             </div>
         );
     }

@@ -4,6 +4,7 @@ const fs = require('fs');
 const multer = require('multer');
 const app = express();
 const port = 3000;
+const bodyParser = require('body-parser');
 
 let fileName = '';
 
@@ -49,6 +50,36 @@ app.get('/films', (request, response) => {
                 response.send(JSON.stringify(films))
             );
         });
+});
+
+let jsonParser = bodyParser.json({type: 'application/json'});
+
+app.post('/film', jsonParser, (request, response) => {
+    let film = request.body;
+
+    let dataBaseInstance = new dataBase();
+
+    // generating unique id for a new film
+    let guid = new parser().getGuid();
+
+    film.id = guid;
+
+    let connection = dataBaseInstance.getConnection();
+
+    connection.then((conn) => {
+        connection = conn;
+
+        let insert = `INSERT INTO film (id, title, year, format)`;
+        let values = `VALUES ('${film.id}', '${film.title}', ${Number(film.year)}, '${film.format}')`;
+        return dataBaseInstance.executeQuery(`${insert} ${values}`, connection);
+    }).then(() => {
+        let insertPromises = dataBaseInstance.insertActors(film, dataBaseInstance, connection);
+
+        insertPromises.then(() =>
+            response.send('Film has been inserted into database')
+        );
+    })
+
 });
 
 app.post('/upload/file', (request, response) => {
