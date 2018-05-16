@@ -1,0 +1,18 @@
+.navbar {
+    display: flex;
+    position: relative;
+    justify-content: center;
+    background-color: #43BAC0;
+    margin-bottom: 20px;
+}
+
+.nav-item {
+    color: white;
+    display: block;
+    padding: 1.5rem 2rem;
+    text-decoration: none;
+}
+
+.nav-item--active {
+    background-color: #a0cacf;
+}
