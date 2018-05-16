@@ -31,6 +31,7 @@ app.get('/', (request, response) => {
     response.send("hello");
 });
 
+// getting all films from database
 app.get('/films', (request, response) => {
 
     let films;
@@ -46,16 +47,25 @@ app.get('/films', (request, response) => {
             // populating array of films with actors for each film and getting promises
             let promises = dataBaseInstance.populateFilmsWithActors(films, dataBaseInstance, connection);
 
-            promises.then(() =>
-                response.send(JSON.stringify(films))
+            promises.then(() => {
+                    response.send(JSON.stringify(films));
+                    connection.end();
+                }
             );
         });
 });
 
 let jsonParser = bodyParser.json({type: 'application/json'});
 
+// adding film to database
 app.post('/film', jsonParser, (request, response) => {
     let film = request.body;
+
+    // year value validation
+    if (Number(film.year) !== Number(film.year)) {
+        response.send('Year value type is int');
+        throw 'Year value type is int';
+    }
 
     let dataBaseInstance = new dataBase();
 
@@ -75,8 +85,10 @@ app.post('/film', jsonParser, (request, response) => {
     }).then(() => {
         let insertPromises = dataBaseInstance.insertActors(film, dataBaseInstance, connection);
 
-        insertPromises.then(() =>
-            response.send('Film has been inserted into database')
+        insertPromises.then(() => {
+                response.send('Film has been inserted into database');
+                connection.end();
+            }
         );
     })
 
@@ -96,6 +108,33 @@ app.post('/upload/file', (request, response) => {
             response.send(JSON.stringify(inputParser.getFilmsObj()));
         });
     });
+});
+
+app.delete('/', jsonParser, (request, response) => {
+    let id = request.body.id;
+
+    let dataBaseInstance = new dataBase();
+
+    let connection = dataBaseInstance.getConnection();
+
+    connection.then((conn) => {
+        connection = conn;
+
+        /* deleting all actors from actorfilm table since foreign key restriction
+         won't allow deleting items from film table first
+         */
+        let deletePart = `DELETE FROM actorfilm`;
+        let where = `WHERE filmId = '${id}'`;
+        return dataBaseInstance.executeQuery(`${deletePart} ${where}`, connection);
+    }).then(() => {
+        /* now we can delete film from film table
+         */
+        let deletePart = `DELETE FROM film`;
+        let where = `WHERE id = '${id}'`;
+        return dataBaseInstance.executeQuery(`${deletePart} ${where}`, connection);
+    }).then(() => {
+        response.send('Film has been removed from database');
+    })
 });
 
 app.listen(port, (err) => {

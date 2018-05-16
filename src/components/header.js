@@ -15,6 +15,14 @@ class Header extends Component {
         }
     }
 
+    componentDidMount() {
+        // sets active link if target route is /redactor
+        if (window.location.href.includes('redactor')) {
+            this.setState({activeIndex: 1});
+        }
+    }
+
+
     setActiveNavItem = (index) => {
         this.setState({activeIndex: index});
     };

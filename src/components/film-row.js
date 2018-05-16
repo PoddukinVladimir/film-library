@@ -20,15 +20,27 @@ class Film extends Component {
 
     handleInfoIconClick = () => {
         if (this.props.redactorMode) {
-
+            // triggers parents function that updates the view
+            this.props.deleteFilm(this.props.film.id);
         } else {
             this.toggleInfo();
         }
     };
 
-    render() {
+    infoRow = () => {
         // used for row expand animation
         const {height} = this.state;
+        return (
+            <AnimateHeight duration={ 1000 }
+                           height={ height }
+                           className="info-row-container"
+                           contentClassName="row-container">
+                <InfoRow film={this.props.film}/>
+            </AnimateHeight>
+        )
+    };
+
+    render() {
         return (
             <div className="row-container">
                 <div className="row-container-row">
@@ -44,14 +56,7 @@ class Film extends Component {
                         </div>
                     </div>
                 </div>
-                {/* Do not show info rows in redactor mode */}
-                {this.props.redactorMode ? null :
-                    <AnimateHeight duration={ 1000 }
-                                   height={ height }
-                                   className="info-row-container"
-                                   contentClassName="row-container">
-                        <InfoRow film={this.props.film}/>
-                    </AnimateHeight>}
+                {this.props.redactorMode ? null : this.infoRow()}
             </div>
         );
     }

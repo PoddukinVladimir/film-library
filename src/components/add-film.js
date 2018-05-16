@@ -57,7 +57,7 @@ class AddFilm extends Component {
                     <input type="text" maxLength={4} id="fyear" name="year" placeholder="Year.." required/>
 
                     <label htmlFor="fformat">Format</label>
-                    <input type="text" maxLength={50} id="fformat" name="format" placeholder="Format.." required/>
+                    <input type="text" maxLength={10} id="fformat" name="format" placeholder="Format.." required/>
 
                     <label htmlFor="actors">Actors <span className="additional-info-title">(separate actors using ',')</span></label>
                     <textarea name="actors" id="actors" cols="30" rows="10" required/>

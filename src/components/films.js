@@ -34,6 +34,29 @@ class Films extends Component {
         this.setState({isMounted: true});
     }
 
+    deleteFilm = (id) => {
+        const url = 'http://localhost:3000/';
+
+        fetch('http://localhost:3000/', {
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/json',
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify({id: id})
+        }).then((response) => {
+            response.text().then((res) => {
+                // removing film from view so the changes apply without retrieving from database
+                this.setState({
+                    films: this.state.films.filter((film) => {
+                        return film.id !== id;
+                    })
+                });
+                alert(res);
+            });
+        });
+    };
+
     submitFile = (event) => {
         event.preventDefault();
 
@@ -55,26 +78,24 @@ class Films extends Component {
             }));
     };
 
+    submitFileForm = () => {
+        return (
+            <form className="form" onSubmit={this.submitFile}>
+                <input id="file" type="file" name="file"/>
+                <button type="submit">Send file</button>
+            </form>
+        )
+    }
+
     render() {
         return (
             <div className="loader-container">
-                <form className="form" onSubmit={this.submitFile}>
-                    <input id="file" type="file" name="file"/>
-                    <button type="submit">Send file</button>
-                </form>
+                {this.props.redactorMode ? this.submitFileForm() : null}
                 <div className="films-container">
                     <div className="row-container">
                         <div className="row-container-row row-container-row--head">
-                            <div
-                                className="row-container-cell row-container-cell--content film-name-cell">
-                                {this.props.redactorMode ?
-                                    <div>
-                                        <a href="">
-                                            <i onClick={this.handleInfoIconClick}
-                                               className={"ion-android-add-circle"}/>
-                                        </a>
-                                        <span>Add new film</span>
-                                    </div> : <span>Title</span>}
+                            <div className="row-container-cell row-container-cell--content film-name-cell">
+                                <span>Title</span>
                             </div>
                             <div className="row-container-cell film-info-cell">
                                 {this.props.redactorMode ? <span>Delete</span> : <span>Info</span>}
@@ -83,7 +104,9 @@ class Films extends Component {
                     </div>
                     {this.state.films.map((film, index) => {
                         return (
-                            <Film redactorMode={this.props.redactorMode} key={index} film={film}/>
+                            <Film redactorMode={this.props.redactorMode}
+                                  key={index} film={film}
+                                  deleteFilm={this.deleteFilm}/>
                         )
                     })}
                 </div>
