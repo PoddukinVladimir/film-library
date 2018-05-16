@@ -94,6 +94,7 @@ app.post('/film', jsonParser, (request, response) => {
 
 });
 
+// uploading file with films and inserting them into database
 app.post('/upload/file', (request, response) => {
     upload(request, response, (err) => {
         if (err) {
