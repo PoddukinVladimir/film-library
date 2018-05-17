@@ -49,7 +49,7 @@ class Film extends Component {
                     </div>
                     <div className="row-container-cell film-info-cell">
                         <div className="row-container-cell--content">
-                            <a href="#0">
+                            <a href="javascript:;">
                                 <i onClick={this.handleInfoIconClick} title="Show info"
                                    className={this.props.redactorMode ? "ion-android-cancel" : "ion-help-circled"}/>
                             </a>

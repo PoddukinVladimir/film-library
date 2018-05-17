@@ -1,7 +1,7 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 
-import Films from './films';
+import Films from './films-table/films';
 import Redactor from './redactor';
 
 const Main = () => (
@@ -13,4 +13,4 @@ const Main = () => (
     </main>
 );
 
-export default Main
+export default Main;

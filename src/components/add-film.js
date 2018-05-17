@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import PubSub from 'pubsub-js';
 
 import '../css/form.css';
 
@@ -26,9 +27,9 @@ class AddFilm extends Component {
             },
             body: JSON.stringify(film)
         }).then((response) => {
-            response.text().then((res) => {
+            response.text().then((film) => {
                 this.clearValues();
-                alert(res);
+                PubSub.publish('filmAdded', JSON.parse(film));
             })
         });
 
@@ -60,22 +61,24 @@ class AddFilm extends Component {
                     <label htmlFor="ftitle">Title</label>
                     <input type="text" className="add-film-form-input"
                            onChange={this.onChangeHandler} maxLength={50}
-                           id="ftitle" name="title" placeholder="Title.." required/>
+                           id="ftitle" value={this.state.title} name="title"
+                           placeholder="Title.." required/>
 
                     <label htmlFor="fyear">Release year</label>
                     <input type="text" className="add-film-form-input"
                            onChange={this.onChangeHandler} maxLength={4}
-                           id="fyear" name="year" placeholder="Year.." required/>
+                           id="fyear" value={this.state.year} name="year" placeholder="Year.." required/>
 
                     <label htmlFor="fformat">Format</label>
                     <input type="text" className="add-film-form-input"
                            onChange={this.onChangeHandler} maxLength={10}
-                           id="fformat" name="format" placeholder="Format.." required/>
+                           id="fformat" name="format" value={this.state.format}
+                           placeholder="Format.." required/>
 
-                    <label htmlFor="actors">Actors <span className="additional-info-title">(separate actors using ',')</span></label>
+                    <label htmlFor="actors">Actors <span className="additional-info-title">(separate actors using ' , ' )</span></label>
                     <textarea name="actors" className="add-film-form-textarea"
                               onChange={this.onChangeHandler} id="actors"
-                              cols="30" rows="10" required/>
+                              value={this.state.actors} cols="30" rows="10" required/>
 
                     <button type="submit">Add</button>
                 </form>

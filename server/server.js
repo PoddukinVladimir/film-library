@@ -43,7 +43,7 @@ app.get('/films', (request, response) => {
         })
         .then((films) => {
             // populating array of films with actors for each film and getting promises
-            let promises = dataBaseInstance.populateFilmsWithActors(films, dataBaseInstance, connection);
+            let promises = dataBaseInstance.selectFilmsWithActors(films, dataBaseInstance, connection);
 
             promises.then(() => {
                     response.send(JSON.stringify(films));
@@ -59,7 +59,7 @@ let jsonParser = bodyParser.json({type: 'application/json'});
 app.post('/film', jsonParser, (request, response) => {
     let film = request.body;
 
-    // year value validation
+    // year value validation (checking for NaN)
     if (Number(film.year) !== Number(film.year)) {
         response.send('Year value type is int');
         throw 'Year value type is int';
@@ -84,7 +84,8 @@ app.post('/film', jsonParser, (request, response) => {
         let insertPromises = dataBaseInstance.insertActors(film, dataBaseInstance, connection);
 
         insertPromises.then(() => {
-                response.send('Film has been inserted into database');
+                // sending film back with generated guid
+                response.send(JSON.stringify(film));
                 connection.end();
             }
         );
@@ -104,6 +105,7 @@ app.post('/upload/file', (request, response) => {
         fs.readFile(path, (err, f) => {
             let inputParser = new parser(f.toString());
 
+            // form object by parsing the input
             let films = inputParser.getFilmsObj();
 
             let dataBaseInstance = new dataBase();
@@ -116,7 +118,8 @@ app.post('/upload/file', (request, response) => {
                     let insertPromises = dataBaseInstance.insertFilms(films, dataBaseInstance, connection);
 
                     insertPromises.then(() => {
-                        response.send(JSON.stringify(inputParser.getFilmsObj()));
+                        response.send(JSON.stringify(films));
+                        connection.end();
                     })
                 });
         });
@@ -132,7 +135,6 @@ app.delete('/', jsonParser, (request, response) => {
 
     connection.then((conn) => {
         connection = conn;
-
         /* deleting all actors from actorfilm table since foreign key restriction
          won't allow deleting items from film table first
          */
@@ -147,6 +149,7 @@ app.delete('/', jsonParser, (request, response) => {
         return dataBaseInstance.executeQuery(`${deletePart} ${where}`, connection);
     }).then(() => {
         response.send('Film has been removed from database');
+        connection.end();
     })
 });
 

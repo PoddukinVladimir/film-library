@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
+import PubSub from 'pubsub-js';
 
 import Film from './film-row';
-import Loader from './loader'
+import Loader from '../loader';
+import SearchRow from './search-row';
 
 class Films extends Component {
     constructor() {
@@ -10,8 +12,13 @@ class Films extends Component {
             isMounted: false,
             films: [],
             updatedList: [],
-            isLoaderVisible: false
+            isLoaderVisible: false,
+            searchPredicate: ''
         }
+    }
+
+    componentWillMount() {
+        this.token = PubSub.subscribe('filmAdded', this.addFilm);
     }
 
     componentDidMount() {
@@ -32,14 +39,36 @@ class Films extends Component {
     }
 
     componentWillUnmount() {
+        PubSub.unsubscribe(this.token);
         // in case view changes before asynchronous fetch tasks are complete
         this.setState({isMounted: true});
+    }
+
+    addFilm = (event, film) => {
+        this.state.films.push(film);
+
+        let updatedList = this.state.films;
+
+        // in case search field is not empty
+        if (this.state.searchPredicate) {
+            updatedList = this.filterCollectionAfterChanges();
+        }
+
+        this.setState({films: this.state.films});
+        this.setState({updatedList: updatedList});
+    };
+
+    // filters collection if search field was not empty when collection changed
+    filterCollectionAfterChanges() {
+        return this.state.films.filter((film) => {
+            return film.title.toLowerCase().search(this.state.searchPredicate.toLowerCase()) !== -1;
+        });
     }
 
     deleteFilm = (id) => {
         const url = 'http://localhost:3000/';
 
-        fetch('http://localhost:3000/', {
+        fetch(url, {
             method: 'DELETE',
             headers: {
                 'Accept': 'application/json',
@@ -55,26 +84,25 @@ class Films extends Component {
                     })
                 });
                 this.setState({
-                    updatedList: this.state.films
+                    updatedList: this.state.updatedList.filter((film) => {
+                        return film.id !== id;
+                    })
                 });
-                // alert(res);
             });
         });
     };
 
-    addFilm = (film) => {
-        this.setState({
-            films: this.state.films.push(film)
-        });
-        this.setState({
-            updatedList: this.state.films
-        })
+    scrollToBottom = () => {
+        window.scrollTo(0, document.body.scrollHeight);
     };
 
     submitFile = (event) => {
         event.preventDefault();
 
+        // show loader
         this.setState({isLoaderVisible: true});
+
+        this.scrollToBottom();
 
         let file = document.getElementById('file').files[0];
 
@@ -90,8 +118,20 @@ class Films extends Component {
             body: formData
         })
             .then(data => data.text().then((newFilms) => {
+                // TODO
+                console.log(JSON.parse(newFilms));
+
                 this.setState({films: this.state.films.concat(JSON.parse(newFilms))});
-                this.setState({updatedList: this.state.films});
+
+
+                let updatedList = this.state.films;
+
+                // in case search field is not empty
+                if (this.state.searchPredicate) {
+                    updatedList = this.filterCollectionAfterChanges();
+                }
+
+                this.setState({updatedList: updatedList});
 
                 this.setState({isLoaderVisible: false});
             }));
@@ -108,26 +148,11 @@ class Films extends Component {
 
     filterFilmCollection = (event) => {
         event.preventDefault();
+
         let updatedList = this.state.films.filter((film) => {
             return film.title.toLowerCase().search(event.target.value.toLowerCase()) !== -1;
         });
-        this.setState({updatedList: updatedList});
-    };
-
-    searchRowHTML = () => {
-        return (
-            <div className="row-container">
-                <div className="row-container-row">
-                    <input id="row-container-row-search" onChange={this.filterFilmCollection}
-                           placeholder="Search..." type="text"/>
-                    <div className="row-container-cell--content">
-                        <a href="#">
-                            <i title="Search by actor name" className="ion-android-contacts"/>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        )
+        this.setState({updatedList: updatedList, searchPredicate: event.target.value});
     };
 
     render() {
@@ -145,7 +170,7 @@ class Films extends Component {
                             </div>
                         </div>
                     </div>
-                    {this.searchRowHTML()}
+                    <SearchRow onChange={this.filterFilmCollection}/>
                     {this.state.updatedList.map((film, index) => {
                         return (
                             <Film redactorMode={this.props.redactorMode}

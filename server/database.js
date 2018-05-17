@@ -11,7 +11,8 @@ class DataBase {
             host: 'localhost',
             user: 'root',
             password: '',
-            database: 'filmlibrary'
+            database: 'filmlibrary',
+            insecureAuth: true
         });
         return connection;
     }
@@ -20,13 +21,13 @@ class DataBase {
         return connection.query(query);
     }
 
-    populateFilmsWithActors(films, db, connection) {
+    selectFilmsWithActors(films, db, connection) {
 
         let select = 'SELECT name, filmId';
         let from = 'FROM film, actorfilm';
         let where = 'WHERE film.id = actorfilm.filmId AND film.id =';
 
-        let populateFilmWithActors = function (film) {
+        let populateFilmObjectWithActors = function (film) {
             return new Promise((resolve) => {
                 film.actors = [];
                 db.executeQuery(`${select} ${from} ${where}'${film.id}'`, connection)
@@ -39,7 +40,7 @@ class DataBase {
             })
         };
 
-        let actions = films.map(populateFilmWithActors);
+        let actions = films.map(populateFilmObjectWithActors);
 
         // we now have a promises array and we want to wait for it
         return Promise.all(actions);
@@ -63,7 +64,6 @@ class DataBase {
 
     insertFilms(films, db, connection) {
         let enqueeFilmsInsertion = function (film) {
-            film.id = new parser().getGuid();
             return new Promise((resolve) => {
                 let insert = `INSERT INTO film (id, title, year, format)`;
                 let values = `VALUES ('${film.id}', '${film.title}', ${Number(film.year)}, '${film.format}')`;

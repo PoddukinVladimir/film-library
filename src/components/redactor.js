@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 
-import Films from './films';
+import Films from './films-table/films';
 import AddFilm from './add-film';
 
 class Redactor extends Component {
