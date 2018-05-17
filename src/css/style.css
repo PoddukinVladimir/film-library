@@ -60,6 +60,12 @@ body {
     background-color: #43BAC0;
 }
 
+#row-container-row-search {
+    width: 100%;
+    font-size: 20px;
+    padding: 30px;
+}
+
 .row-container-row-info {
     background-color: #a0cacf;
 }

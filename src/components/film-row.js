@@ -27,7 +27,7 @@ class Film extends Component {
         }
     };
 
-    infoRow = () => {
+    infoRowHTML = () => {
         // used for row expand animation
         const {height} = this.state;
         return (
@@ -56,7 +56,7 @@ class Film extends Component {
                         </div>
                     </div>
                 </div>
-                {this.props.redactorMode ? null : this.infoRow()}
+                {this.props.redactorMode ? null : this.infoRowHTML()}
             </div>
         );
     }

@@ -5,6 +5,12 @@ import '../css/form.css';
 class AddFilm extends Component {
     constructor() {
         super();
+        this.state = {
+            title: '',
+            year: '',
+            format: '',
+            actors: ''
+        }
     }
 
     submitNewFilm = (event) => {
@@ -28,19 +34,20 @@ class AddFilm extends Component {
 
     };
 
+    onChangeHandler = (event) => {
+        this.setState({[event.target.name]: event.target.value});
+    };
+
     clearValues() {
-        document.getElementById('ftitle').value = '';
-        document.getElementById('fyear').value = '';
-        document.getElementById('fformat').value = '';
-        document.getElementById('actors').value = '';
+        this.setState({title: '', year: '', format: '', actors: ''});
     }
 
     formFilmObjectUsingUserInput= () => {
         let film = {};
-        film.title = document.getElementById('ftitle').value;
-        film.year = document.getElementById('fyear').value;
-        film.format = document.getElementById('fformat').value;
-        film.actors = document.getElementById('actors').value.split(',');
+        film.title = this.state.title;
+        film.year = this.state.year;
+        film.format = this.state.format;
+        film.actors = this.state.actors.split(',');
 
         return film;
     };
@@ -51,16 +58,24 @@ class AddFilm extends Component {
                 <p className="add-film-title">Add new film</p>
                 <form onSubmit={this.submitNewFilm} className="add-film-form">
                     <label htmlFor="ftitle">Title</label>
-                    <input type="text" maxLength={50} id="ftitle" name="title" placeholder="Title.." required/>
+                    <input type="text" className="add-film-form-input"
+                           onChange={this.onChangeHandler} maxLength={50}
+                           id="ftitle" name="title" placeholder="Title.." required/>
 
                     <label htmlFor="fyear">Release year</label>
-                    <input type="text" maxLength={4} id="fyear" name="year" placeholder="Year.." required/>
+                    <input type="text" className="add-film-form-input"
+                           onChange={this.onChangeHandler} maxLength={4}
+                           id="fyear" name="year" placeholder="Year.." required/>
 
                     <label htmlFor="fformat">Format</label>
-                    <input type="text" maxLength={10} id="fformat" name="format" placeholder="Format.." required/>
+                    <input type="text" className="add-film-form-input"
+                           onChange={this.onChangeHandler} maxLength={10}
+                           id="fformat" name="format" placeholder="Format.." required/>
 
                     <label htmlFor="actors">Actors <span className="additional-info-title">(separate actors using ',')</span></label>
-                    <textarea name="actors" id="actors" cols="30" rows="10" required/>
+                    <textarea name="actors" className="add-film-form-textarea"
+                              onChange={this.onChangeHandler} id="actors"
+                              cols="30" rows="10" required/>
 
                     <button type="submit">Add</button>
                 </form>

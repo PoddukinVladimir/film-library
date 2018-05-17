@@ -44,10 +44,10 @@ class Parser {
                     break;
                 case 'Stars':
                     let stars = line[1].split(',');
-                    filmInfo.stars = [];
+                    filmInfo.actors = [];
 
                     stars.forEach((star) => {
-                        filmInfo.stars.push(star.trim());
+                        filmInfo.actors.push(star.trim());
                     });
                     break;
                 default:

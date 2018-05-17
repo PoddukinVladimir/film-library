@@ -13,8 +13,6 @@ import removeIcon from '../assets/remove-icon.png';
 import App from '../components/app';
 import getMessage from './connection.test';
 
-getMessage();
-
 render((
     <BrowserRouter>
         <App/>

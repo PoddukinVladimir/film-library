@@ -1,4 +1,5 @@
 let mysql = require('promise-mysql');
+let parser = require('./parser.js');
 
 class DataBase {
     constructor() {
@@ -56,6 +57,26 @@ class DataBase {
         };
 
         let actions = film.actors.map(enqueeActorsInsertion);
+
+        return Promise.all(actions);
+    }
+
+    insertFilms(films, db, connection) {
+        let enqueeFilmsInsertion = function (film) {
+            film.id = new parser().getGuid();
+            return new Promise((resolve) => {
+                let insert = `INSERT INTO film (id, title, year, format)`;
+                let values = `VALUES ('${film.id}', '${film.title}', ${Number(film.year)}, '${film.format}')`;
+                db.executeQuery(`${insert} ${values}`, connection).then(() => {
+                    db.insertActors(film, db, connection)
+                        .then(() => {
+                            resolve();
+                        })
+                    });
+            })
+        };
+
+        let actions = films.map(enqueeFilmsInsertion);
 
         return Promise.all(actions);
     }

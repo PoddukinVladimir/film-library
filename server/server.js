@@ -11,8 +11,6 @@ let fileName = '';
 let parser = require('./parser.js');
 let dataBase = require('./database');
 
-let test = require('./json/test.json');
-
 let storage = multer.diskStorage({
     destination: function (req, file, callback) {
         callback(null, './uploads');
@@ -106,7 +104,21 @@ app.post('/upload/file', (request, response) => {
         fs.readFile(path, (err, f) => {
             let inputParser = new parser(f.toString());
 
-            response.send(JSON.stringify(inputParser.getFilmsObj()));
+            let films = inputParser.getFilmsObj();
+
+            let dataBaseInstance = new dataBase();
+
+            let connection = dataBaseInstance.getConnection();
+
+            connection
+                .then((conn) => {
+                    connection = conn;
+                    let insertPromises = dataBaseInstance.insertFilms(films, dataBaseInstance, connection);
+
+                    insertPromises.then(() => {
+                        response.send(JSON.stringify(inputParser.getFilmsObj()));
+                    })
+                });
         });
     });
 });

@@ -9,7 +9,8 @@ class Films extends Component {
         this.state = {
             isMounted: false,
             films: [],
-            isLoaderVisible: false,
+            updatedList: [],
+            isLoaderVisible: false
         }
     }
 
@@ -25,6 +26,7 @@ class Films extends Component {
             .then((data) => {
                 if (this.state.isMounted) {
                     this.setState({films: JSON.parse(data), isLoaderVisible: false});
+                    this.setState({updatedList: this.state.films});
                 }
             });
     }
@@ -52,13 +54,27 @@ class Films extends Component {
                         return film.id !== id;
                     })
                 });
-                alert(res);
+                this.setState({
+                    updatedList: this.state.films
+                });
+                // alert(res);
             });
         });
     };
 
+    addFilm = (film) => {
+        this.setState({
+            films: this.state.films.push(film)
+        });
+        this.setState({
+            updatedList: this.state.films
+        })
+    };
+
     submitFile = (event) => {
         event.preventDefault();
+
+        this.setState({isLoaderVisible: true});
 
         let file = document.getElementById('file').files[0];
 
@@ -73,24 +89,51 @@ class Films extends Component {
             },
             body: formData
         })
-            .then(data => data.text().then((text) => {
-                console.log(JSON.parse(text));
+            .then(data => data.text().then((newFilms) => {
+                this.setState({films: this.state.films.concat(JSON.parse(newFilms))});
+                this.setState({updatedList: this.state.films});
+
+                this.setState({isLoaderVisible: false});
             }));
     };
 
-    submitFileForm = () => {
+    submitFileFormHTML = () => {
         return (
             <form className="form" onSubmit={this.submitFile}>
                 <input id="file" type="file" name="file"/>
                 <button type="submit">Send file</button>
             </form>
         )
-    }
+    };
+
+    filterFilmCollection = (event) => {
+        event.preventDefault();
+        let updatedList = this.state.films.filter((film) => {
+            return film.title.toLowerCase().search(event.target.value.toLowerCase()) !== -1;
+        });
+        this.setState({updatedList: updatedList});
+    };
+
+    searchRowHTML = () => {
+        return (
+            <div className="row-container">
+                <div className="row-container-row">
+                    <input id="row-container-row-search" onChange={this.filterFilmCollection}
+                           placeholder="Search..." type="text"/>
+                    <div className="row-container-cell--content">
+                        <a href="#">
+                            <i title="Search by actor name" className="ion-android-contacts"/>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        )
+    };
 
     render() {
         return (
             <div className="loader-container">
-                {this.props.redactorMode ? this.submitFileForm() : null}
+                {this.props.redactorMode ? this.submitFileFormHTML() : null}
                 <div className="films-container">
                     <div className="row-container">
                         <div className="row-container-row row-container-row--head">
@@ -102,7 +145,8 @@ class Films extends Component {
                             </div>
                         </div>
                     </div>
-                    {this.state.films.map((film, index) => {
+                    {this.searchRowHTML()}
+                    {this.state.updatedList.map((film, index) => {
                         return (
                             <Film redactorMode={this.props.redactorMode}
                                   key={index} film={film}
