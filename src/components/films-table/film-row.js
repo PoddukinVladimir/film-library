@@ -44,15 +44,14 @@ class Film extends Component {
         return (
             <div className="row-container">
                 <div className="row-container-row">
-                    <div className="row-container-cell film-name-cell">
+                    <div className="row-container-cell row-container-cell--film-name">
                         <span className="main-title">{this.props.film.title}</span>
                     </div>
-                    <div className="row-container-cell film-info-cell">
+                    <div className="row-container-cell row-container-cell--film-info">
                         <div className="row-container-cell--content">
-                            <a href="javascript:;">
-                                <i onClick={this.handleInfoIconClick} title="Show info"
-                                   className={this.props.redactorMode ? "ion-android-cancel" : "ion-help-circled"}/>
-                            </a>
+                            <i onClick={this.handleInfoIconClick}
+                               title={this.props.redactorMode ? "Delete film" : "Show info"}
+                               className={this.props.redactorMode ? "ion-android-cancel" : "ion-help-circled"}/>
                         </div>
                     </div>
                 </div>

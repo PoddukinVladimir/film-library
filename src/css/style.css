@@ -18,20 +18,30 @@ body {
     box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
 }
 
-.is-striped { background-color: rgba(233,200,147,0.2) }
+.is-striped {
+    background-color: rgba(233, 200, 147, 0.2)
+}
 
+/* Flex-box column sizing */
+.row-container-cell--film-name {
+    width: 90%;
+}
 
-/* Flex-box column sizing
-================================== */
-.film-name-cell  { width: 90%; }
-.film-info-cell  { width: 10%; }
-.row-container-cell-info {width: 40%}
+.row-container-cell--film-info {
+    width: 10%;
+    text-align: right;
+}
+
+.row-container-cell-info {
+    width: 40%
+}
 
 .row-container-cell-info--actors,
-.row-container-cell-info--year {width: 15%}
+.row-container-cell-info--year {
+    width: 15%
+}
 
-/* Apply styles
-================================== */
+/* Flex-box rows */
 .row-container {
     display: flex;
     flex-wrap: wrap;
@@ -54,6 +64,7 @@ body {
     background-color: #43BAC0;
     color: white;
     height: 60px;
+    overflow: visible;
 }
 
 .row-container-row--head:hover {
@@ -63,7 +74,8 @@ body {
 #row-container-row-search {
     width: 100%;
     font-size: 20px;
-    padding: 30px;
+    padding: 15px;
+    box-sizing: content-box;
 }
 
 .row-container-row-info {
@@ -88,33 +100,59 @@ body {
     flex-grow: 1;
     padding: 0.8em 1.2em;
     word-break: break-all;
-    overflow: hidden; /* Or flex might break */
+    overflow: hidden;
     list-style: none;
 }
 
-.film-name-cell > div {
+.row-container-cell--film-name > div {
     display: inline-block;
 }
 
-.film-name-cell > div > a {
+.row-container-cell--film-name > div > i {
     margin-right: 10px;
 }
 
-.film-name-cell > div > span {
+.row-container-cell--film-name > div > span {
     vertical-align: super;
 }
 
-.film-name-cell > div:hover a > .ion-android-add-circle {
+.row-container-cell--film-name > div:hover i > .ion-android-add-circle {
     color: #00a600;
+}
+
+.row-container-cell--head {
+    text-align: center;
 }
 
 .info-row-container {
     width: 100%;
 }
 
-.row-container-cell--content a {
+.row-container-cell--content i {
     font-size: 2em;
     color: #333;
+}
+
+.row-container-cell--content-actor-search {
+    height: 100%;
+    background: white;
+    padding-top: 15px;
+}
+
+.actor-search-active {
+    background-color: #a0cacf;
+}
+
+.head-title {
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    line-height: 35px;
+}
+
+.head-title--right {
+    float: right;
+    line-height: 35px;
 }
 
 .main-title {
@@ -136,12 +174,8 @@ body {
     font-size: 20px;
 }
 
-.form {
-    text-align: center;
-}
-
 .ion-android-cancel:hover {
-     color: red;
+    color: red;
 }
 
 .ion-help-circled:hover {
@@ -150,4 +184,10 @@ body {
 
 .ion-android-add-circle {
     color: darkgreen;
+}
+
+@media only screen and (max-width: 600px) {
+    .row-container-row-info {
+        font-size: 9px;
+    }
 }

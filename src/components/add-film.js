@@ -19,6 +19,8 @@ class AddFilm extends Component {
 
         let film = this.formFilmObjectUsingUserInput();
 
+        if (!this.isFilmInputValid(film)) return;
+
         fetch('http://localhost:3000/film', {
             method: 'POST',
             headers: {
@@ -31,8 +33,19 @@ class AddFilm extends Component {
                 this.clearValues();
                 PubSub.publish('filmAdded', JSON.parse(film));
             })
-        });
+        })
 
+    };
+
+    isFilmInputValid = (film) => {
+        // Check if year value casting doesn't result in a NaN
+        if (Number(film.year) !== Number(film.year)) {
+            alert('Release year value type is int');
+            document.getElementById('fyear').focus();
+            return false;
+        }
+
+        return true;
     };
 
     onChangeHandler = (event) => {
@@ -43,7 +56,7 @@ class AddFilm extends Component {
         this.setState({title: '', year: '', format: '', actors: ''});
     }
 
-    formFilmObjectUsingUserInput= () => {
+    formFilmObjectUsingUserInput = () => {
         let film = {};
         film.title = this.state.title;
         film.year = this.state.year;
@@ -56,31 +69,34 @@ class AddFilm extends Component {
     render() {
         return (
             <div className="add-film-form-container">
-                <p className="add-film-title">Add new film</p>
                 <form onSubmit={this.submitNewFilm} className="add-film-form">
-                    <label htmlFor="ftitle">Title</label>
-                    <input type="text" className="add-film-form-input"
-                           onChange={this.onChangeHandler} maxLength={50}
-                           id="ftitle" value={this.state.title} name="title"
-                           placeholder="Title.." required/>
+                    <p className="add-film-title">Add new film</p>
+                    <div className="form-container">
+                        <label htmlFor="ftitle">Title</label>
+                        <input type="text" className="add-film-form-input"
+                               onChange={this.onChangeHandler} maxLength={50}
+                               id="ftitle" value={this.state.title} name="title"
+                               placeholder="Title.." required/>
 
-                    <label htmlFor="fyear">Release year</label>
-                    <input type="text" className="add-film-form-input"
-                           onChange={this.onChangeHandler} maxLength={4}
-                           id="fyear" value={this.state.year} name="year" placeholder="Year.." required/>
+                        <label htmlFor="fyear">Release year</label>
+                        <input type="text" className="add-film-form-input"
+                               onChange={this.onChangeHandler} maxLength={4}
+                               id="fyear" value={this.state.year} name="year" placeholder="Year.." required/>
 
-                    <label htmlFor="fformat">Format</label>
-                    <input type="text" className="add-film-form-input"
-                           onChange={this.onChangeHandler} maxLength={10}
-                           id="fformat" name="format" value={this.state.format}
-                           placeholder="Format.." required/>
+                        <label htmlFor="fformat">Format</label>
+                        <input type="text" className="add-film-form-input"
+                               onChange={this.onChangeHandler} maxLength={10}
+                               id="fformat" name="format" value={this.state.format}
+                               placeholder="Format.." required/>
 
-                    <label htmlFor="actors">Actors <span className="additional-info-title">(separate actors using ' , ' )</span></label>
-                    <textarea name="actors" className="add-film-form-textarea"
-                              onChange={this.onChangeHandler} id="actors"
-                              value={this.state.actors} cols="30" rows="10" required/>
+                        <label htmlFor="actors">Actors
+                            <span className="additional-info-title"> (separate actors using ' , ' )</span></label>
+                        <textarea name="actors" className="add-film-form-textarea"
+                                  onChange={this.onChangeHandler} id="actors"
+                                  value={this.state.actors} cols="30" rows="10" required/>
 
-                    <button type="submit">Add</button>
+                        <button type="submit">Add</button>
+                    </div>
                 </form>
             </div>
         )

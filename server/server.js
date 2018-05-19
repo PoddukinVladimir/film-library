@@ -59,18 +59,10 @@ let jsonParser = bodyParser.json({type: 'application/json'});
 app.post('/film', jsonParser, (request, response) => {
     let film = request.body;
 
-    // year value validation (checking for NaN)
-    if (Number(film.year) !== Number(film.year)) {
-        response.send('Year value type is int');
-        throw 'Year value type is int';
-    }
-
     let dataBaseInstance = new dataBase();
 
     // generating unique id for a new film
-    let guid = new parser().getGuid();
-
-    film.id = guid;
+    film.id = new parser().getGuid();
 
     let connection = dataBaseInstance.getConnection();
 
@@ -97,7 +89,7 @@ app.post('/film', jsonParser, (request, response) => {
 app.post('/upload/file', (request, response) => {
     upload(request, response, (err) => {
         if (err) {
-            return response.end('Error uploading file');
+            return response.send('Error uploading file');
         }
 
         let path = `./uploads/${fileName}`;

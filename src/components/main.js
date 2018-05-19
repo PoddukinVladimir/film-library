@@ -5,12 +5,10 @@ import Films from './films-table/films';
 import Redactor from './redactor';
 
 const Main = () => (
-    <main>
         <Switch>
             <Route exact path='/' component={Films}/>
             <Route path='/redactor' component={Redactor}/>
         </Switch>
-    </main>
 );
 
 export default Main;

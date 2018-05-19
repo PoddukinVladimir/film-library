@@ -1,0 +1,45 @@
+.sorting-popup-container {
+    float: left;
+}
+
+.popup-button {
+    width: 30px;
+    height: 30px;
+    background-color: cadetblue;
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    margin-top: 3px;
+    font-size: 2em;
+}
+
+.popup-content {
+    position: absolute;
+    width: 180px;
+    height: 90px;
+    padding: 10px 0;
+    text-align: left;
+    background-color: #a0cacf;
+}
+
+.sorting-popup-item {
+    padding: 0 10px;
+}
+
+.sorting-popup-item:hover {
+    background: cadetblue;
+}
+
+.popup-content i {
+    font-size: 22px;
+    color: #333;
+}
+
+.popup-content-title {
+    vertical-align: text-bottom;
+    padding-left: 15px;
+}
+
+.ion-android-arrow-dropdown {
+    vertical-align: sub;
+}

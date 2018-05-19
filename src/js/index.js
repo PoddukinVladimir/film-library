@@ -5,17 +5,16 @@ import {BrowserRouter} from 'react-router-dom'
 // importing styles
 import '../css/style.css';
 
-// importing assets
-import addIcon from '../assets/add-icon.png';
-import removeIcon from '../assets/remove-icon.png';
+// fetch polyfill for IE11
+import 'whatwg-fetch';
+// promise polyfill for IE8+
+import 'promise-polyfill/src/polyfill';
+import './polyfills';
 
-// importing js
 import App from '../components/app';
-import getMessage from './connection.test';
 
 render((
     <BrowserRouter>
         <App/>
     </BrowserRouter>
 ), document.getElementById('app'));
-// render(<Hello />, document.getElementById('app'));

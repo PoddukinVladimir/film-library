@@ -4,6 +4,7 @@ import PubSub from 'pubsub-js';
 import Film from './film-row';
 import Loader from '../loader';
 import SearchRow from './search-row';
+import SortingPopup from './sorting-popup';
 
 class Films extends Component {
     constructor() {
@@ -13,12 +14,17 @@ class Films extends Component {
             films: [],
             updatedList: [],
             isLoaderVisible: false,
-            searchPredicate: ''
+            searchPredicate: '',
+            sortingOptionsShown: false,
+            searchByActorsActive: false,
+            sortingOrder: ''
         }
     }
 
     componentWillMount() {
-        this.token = PubSub.subscribe('filmAdded', this.addFilm);
+        this.filmAddedSubscriber = PubSub.subscribe('filmAdded', this.addFilm);
+        this.fileSubmittedSubscriber = PubSub.subscribe('fileSubmitted', this.submitFile);
+        this.searchCriteriaChangedSubscriber = PubSub.subscribe('searchCriteriaChanged', this.toggleSearchByActors);
     }
 
     componentDidMount() {
@@ -33,37 +39,52 @@ class Films extends Component {
             .then((data) => {
                 if (this.state.isMounted) {
                     this.setState({films: JSON.parse(data), isLoaderVisible: false});
-                    this.setState({updatedList: this.state.films});
+                    this.setState({updatedList: this.cloneObj(this.state.films)});
                 }
             });
     }
 
     componentWillUnmount() {
-        PubSub.unsubscribe(this.token);
+        PubSub.unsubscribe(this.filmAddedSubscriber);
+        PubSub.unsubscribe(this.fileSubmittedSubscriber);
+        PubSub.unsubscribe(this.searchCriteriaChangedSubscriber);
+
         // in case view changes before asynchronous fetch tasks are complete
-        this.setState({isMounted: true});
+        this.setState({isMounted: false});
     }
+
+    toggleSearchByActors = () => {
+        this.setState({searchByActorsActive: !this.state.searchByActorsActive});
+
+        // in case search field is not empty
+        this.filterFilmCollection();
+
+        // in case sorting is enabled
+        this.sortFilms(this.state.sortingOrder);
+    };
+
+    toggleSortingPanel = () => {
+        this.setState({sortingOptionsShown: !this.state.sortingOptionsShown});
+    };
+
+    scrollToBottom = () => {
+        window.scrollTo(0, document.body.scrollHeight);
+    };
+
+    cloneObj = (obj) => {
+        return JSON.parse(JSON.stringify(obj));
+    };
+
 
     addFilm = (event, film) => {
         this.state.films.push(film);
 
-        let updatedList = this.state.films;
-
         // in case search field is not empty
-        if (this.state.searchPredicate) {
-            updatedList = this.filterCollectionAfterChanges();
-        }
+        this.filterFilmCollection();
 
-        this.setState({films: this.state.films});
-        this.setState({updatedList: updatedList});
+        // in case sorting is enabled
+        this.sortFilms(this.state.sortingOrder);
     };
-
-    // filters collection if search field was not empty when collection changed
-    filterCollectionAfterChanges() {
-        return this.state.films.filter((film) => {
-            return film.title.toLowerCase().search(this.state.searchPredicate.toLowerCase()) !== -1;
-        });
-    }
 
     deleteFilm = (id) => {
         const url = 'http://localhost:3000/';
@@ -92,13 +113,7 @@ class Films extends Component {
         });
     };
 
-    scrollToBottom = () => {
-        window.scrollTo(0, document.body.scrollHeight);
-    };
-
-    submitFile = (event) => {
-        event.preventDefault();
-
+    submitFile = () => {
         // show loader
         this.setState({isLoaderVisible: true});
 
@@ -118,65 +133,93 @@ class Films extends Component {
             body: formData
         })
             .then(data => data.text().then((newFilms) => {
-                // TODO
-                console.log(JSON.parse(newFilms));
 
                 this.setState({films: this.state.films.concat(JSON.parse(newFilms))});
 
-
-                let updatedList = this.state.films;
-
                 // in case search field is not empty
-                if (this.state.searchPredicate) {
-                    updatedList = this.filterCollectionAfterChanges();
-                }
+                this.filterFilmCollection();
 
-                this.setState({updatedList: updatedList});
+                // in case sorting is enabled
+                this.sortFilms(this.state.sortingOrder);
 
                 this.setState({isLoaderVisible: false});
             }));
     };
 
-    submitFileFormHTML = () => {
-        return (
-            <form className="form" onSubmit={this.submitFile}>
-                <input id="file" type="file" name="file"/>
-                <button type="submit">Send file</button>
-            </form>
-        )
+    // is called whenever onChange event is triggered
+    filterFilmCollection = (event) => {
+        if (event) {
+            event.preventDefault();
+        }
+
+        // if call wasn't initiated by onChange event, use state's value
+        let searchPredicate = (event ? event.target.value : this.state.searchPredicate).toLowerCase();
+
+        let updatedList = [];
+        if (this.state.searchByActorsActive) {
+            // in case actor's name is the search criteria
+            updatedList = this.state.films.filter((film) => {
+                return (film.actors.some((actor) => actor.toLowerCase().includes(searchPredicate)));
+            });
+        } else {
+            // in case film title is the search criteria
+            updatedList = this.state.films.filter((film) => {
+                return film.title.toLowerCase().search(searchPredicate) !== -1;
+            });
+        }
+        this.setState({updatedList: updatedList, searchPredicate: searchPredicate});
     };
 
-    filterFilmCollection = (event) => {
-        event.preventDefault();
+    sortFilms = (sortingOrder) => {
+        function sortAsc(a, b) {
+            if (a.title > b.title) return 1;
+            if (a.title < b.title) return -1;
 
-        let updatedList = this.state.films.filter((film) => {
-            return film.title.toLowerCase().search(event.target.value.toLowerCase()) !== -1;
-        });
-        this.setState({updatedList: updatedList, searchPredicate: event.target.value});
+            return 0;
+        }
+
+        function sortDesc(a, b) {
+            if (a.title < b.title) return 1;
+            if (a.title > b.title) return -1;
+
+            return 0;
+        }
+
+        if (sortingOrder === 'asc') {
+            this.state.updatedList.sort(sortAsc);
+            this.setState({updatedList: this.state.updatedList, sortingOrder: "asc"});
+        } else if (sortingOrder === 'desc') {
+            this.state.updatedList.sort(sortDesc);
+            this.setState({updatedList: this.state.updatedList, sortingOrder: "desc"});
+        } else {
+            this.filterFilmCollection();
+            this.setState({sortingOrder: ""});
+        }
     };
 
     render() {
         return (
             <div className="loader-container">
-                {this.props.redactorMode ? this.submitFileFormHTML() : null}
                 <div className="films-container">
-                    <div className="row-container">
-                        <div className="row-container-row row-container-row--head">
-                            <div className="row-container-cell row-container-cell--content film-name-cell">
-                                <span>Title</span>
-                            </div>
-                            <div className="row-container-cell film-info-cell">
-                                {this.props.redactorMode ? <span>Delete</span> : <span>Info</span>}
-                            </div>
+                    <div className="row-container-row row-container-row--head">
+                        <div className="row-container-cell row-container-cell--head">
+                            <SortingPopup sortFilms={this.sortFilms}
+                                          toggleSortingPanel={this.toggleSortingPanel}
+                                          isShown={this.state.sortingOptionsShown}/>
+                            <span className="head-title">Film Title</span>
+                            {this.props.redactorMode ?
+                                <span className="head-title--right">Delete</span> :
+                                <span className="head-title--right">Info</span>}
                         </div>
                     </div>
-                    <SearchRow onChange={this.filterFilmCollection}/>
+                    <SearchRow onChange={this.filterFilmCollection}
+                               redactorMode={this.props.redactorMode}
+                               searchByActorsActive={this.state.searchByActorsActive}/>
                     {this.state.updatedList.map((film, index) => {
                         return (
                             <Film redactorMode={this.props.redactorMode}
                                   key={index} film={film}
-                                  deleteFilm={this.deleteFilm}/>
-                        )
+                                  deleteFilm={this.deleteFilm}/>)
                     })}
                 </div>
                 {this.state.isLoaderVisible ? <Loader/> : null}
