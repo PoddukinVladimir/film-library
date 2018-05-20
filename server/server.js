@@ -79,6 +79,33 @@ app.post('/films', jsonParser, (request, response) => {
 
 });
 
+app.delete('/films', jsonParser, (request, response) => {
+    let id = request.body.id;
+
+    let dataBaseInstance = new dataBase();
+
+    let connection = dataBaseInstance.getConnection();
+
+    connection.then((conn) => {
+        connection = conn;
+        /* deleting all actors from actorfilm table since foreign key restriction
+         won't allow deleting items from film table first
+         */
+        let deletePart = `DELETE FROM actorfilm`;
+        let where = `WHERE filmId = '${id}'`;
+        return dataBaseInstance.executeQuery(`${deletePart} ${where}`, connection);
+    }).then(() => {
+        /* now we can delete film from film table
+         */
+        let deletePart = `DELETE FROM film`;
+        let where = `WHERE id = '${id}'`;
+        return dataBaseInstance.executeQuery(`${deletePart} ${where}`, connection);
+    }).then(() => {
+        response.send('Film has been removed from database');
+        connection.end();
+    })
+});
+
 // uploading file with films and inserting them into database
 app.post('/upload/file', (request, response) => {
     upload(request, response, (err) => {
@@ -109,33 +136,6 @@ app.post('/upload/file', (request, response) => {
                 });
         });
     });
-});
-
-app.delete('/films', jsonParser, (request, response) => {
-    let id = request.body.id;
-
-    let dataBaseInstance = new dataBase();
-
-    let connection = dataBaseInstance.getConnection();
-
-    connection.then((conn) => {
-        connection = conn;
-        /* deleting all actors from actorfilm table since foreign key restriction
-         won't allow deleting items from film table first
-         */
-        let deletePart = `DELETE FROM actorfilm`;
-        let where = `WHERE filmId = '${id}'`;
-        return dataBaseInstance.executeQuery(`${deletePart} ${where}`, connection);
-    }).then(() => {
-        /* now we can delete film from film table
-         */
-        let deletePart = `DELETE FROM film`;
-        let where = `WHERE id = '${id}'`;
-        return dataBaseInstance.executeQuery(`${deletePart} ${where}`, connection);
-    }).then(() => {
-        response.send('Film has been removed from database');
-        connection.end();
-    })
 });
 
 app.listen(port, (err) => {
