@@ -21,7 +21,7 @@ class AddFilm extends Component {
 
         if (!this.isFilmInputValid(film)) return;
 
-        fetch('http://localhost:3000/film', {
+        fetch('http://localhost:3000/films', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',

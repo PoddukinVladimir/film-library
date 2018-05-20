@@ -25,10 +25,6 @@ let upload = multer({storage: storage}).single('file');
 
 app.use(cors());
 
-app.get('/', (request, response) => {
-    response.send("hello");
-});
-
 // getting all films from database
 app.get('/films', (request, response) => {
 
@@ -54,7 +50,7 @@ app.get('/films', (request, response) => {
 let jsonParser = bodyParser.json({type: 'application/json'});
 
 // adding film to database
-app.post('/film', jsonParser, (request, response) => {
+app.post('/films', jsonParser, (request, response) => {
     let film = request.body;
 
     let dataBaseInstance = new dataBase();
