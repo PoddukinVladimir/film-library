@@ -32,12 +32,10 @@ app.get('/', (request, response) => {
 // getting all films from database
 app.get('/films', (request, response) => {
 
-    let films;
     let dataBaseInstance = new dataBase();
     let connection = dataBaseInstance.getConnection();
 
-    connection
-        .then((conn) => {
+    connection.then((conn) => {
             connection = conn;
             return dataBaseInstance.executeQuery('SELECT id, title, year, format FROM film', connection);
         })
@@ -104,8 +102,7 @@ app.post('/upload/file', (request, response) => {
 
             let connection = dataBaseInstance.getConnection();
 
-            connection
-                .then((conn) => {
+            connection.then((conn) => {
                     connection = conn;
                     let insertPromises = dataBaseInstance.insertFilms(films, dataBaseInstance, connection);
 

@@ -13,7 +13,7 @@ class Redactor extends Component {
         return (
             <div className="form-container">
                 <AddFilm/>
-                <Films redactorMode={true}/>
+                <Films editorMode={true}/>
                 <ImportFile/>
             </div>
         )

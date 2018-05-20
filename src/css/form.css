@@ -21,7 +21,7 @@ textarea {
     height: 90px;
 }
 
-.button-redactor {
+.button-editor {
     display: block;
     margin: auto;
     padding: 8px 20px;
@@ -32,7 +32,7 @@ textarea {
     border: none;
 }
 
-.button-redactor--blue {
+.button-editor--blue {
     background-color: #43BAC0;
 }
 

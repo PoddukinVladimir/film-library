@@ -19,7 +19,7 @@ class Film extends Component {
     };
 
     handleInfoIconClick = () => {
-        if (this.props.redactorMode) {
+        if (this.props.editorMode) {
             // triggers parents function that updates the view
             this.props.deleteFilm(this.props.film.id);
         } else {
@@ -50,12 +50,12 @@ class Film extends Component {
                     <div className="row-container-cell row-container-cell--film-info">
                         <div className="row-container-cell--content">
                             <i onClick={this.handleInfoIconClick}
-                               title={this.props.redactorMode ? "Delete film" : "Show info"}
-                               className={this.props.redactorMode ? "ion-android-cancel" : "ion-help-circled"}/>
+                               title={this.props.editorMode ? "Delete film" : "Show info"}
+                               className={this.props.editorMode ? "ion-android-cancel" : "ion-help-circled"}/>
                         </div>
                     </div>
                 </div>
-                {this.props.redactorMode ? null : this.infoRowHTML()}
+                {this.props.editorMode ? null : this.infoRowHTML()}
             </div>
         );
     }

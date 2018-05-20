@@ -9,15 +9,15 @@ class Header extends Component {
         this.state = {
             links: [
                 {title: 'Home', to: '/'},
-                {title: 'Redactor', to: '/redactor'}
+                {title: 'Editor', to: '/editor'}
             ],
             activeIndex: 0
         }
     }
 
     componentDidMount() {
-        // sets active link if target route is /redactor
-        if (window.location.href.includes('redactor')) {
+        // sets active link if target route is /editor
+        if (window.location.href.includes('editor')) {
             this.setState({activeIndex: 1});
         }
     }

@@ -25,7 +25,7 @@ class SearchRow extends Component {
                 <div className="row-container-row">
                     <input id="row-container-row-search" name="searchPredicate" onChange={this.props.onChange}
                            placeholder="Search..." type="text"/>
-                    {this.props.redactorMode ? null : this.changeSearchCriteriaHTML()}
+                    {this.props.editorMode ? null : this.changeSearchCriteriaHTML()}
                 </div>
             </div>
         )

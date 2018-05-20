@@ -207,17 +207,17 @@ class Films extends Component {
                                           toggleSortingPanel={this.toggleSortingPanel}
                                           isShown={this.state.sortingOptionsShown}/>
                             <span className="head-title">Film Title</span>
-                            {this.props.redactorMode ?
+                            {this.props.editorMode ?
                                 <span className="head-title--right">Delete</span> :
                                 <span className="head-title--right">Info</span>}
                         </div>
                     </div>
                     <SearchRow onChange={this.filterFilmCollection}
-                               redactorMode={this.props.redactorMode}
+                               editorMode={this.props.editorMode}
                                searchByActorsActive={this.state.searchByActorsActive}/>
                     {this.state.updatedList.map((film, index) => {
                         return (
-                            <Film redactorMode={this.props.redactorMode}
+                            <Film editorMode={this.props.editorMode}
                                   key={index} film={film}
                                   deleteFilm={this.deleteFilm}/>)
                     })}
