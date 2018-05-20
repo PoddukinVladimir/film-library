@@ -74,7 +74,7 @@ class AddFilm extends Component {
                     <div className="form-container">
                         <label htmlFor="ftitle">Title</label>
                         <input type="text" className="add-film-form-input"
-                               onChange={this.onChangeHandler} maxLength={50}
+                               onChange={this.onChangeHandler} maxLength={100}
                                id="ftitle" value={this.state.title} name="title"
                                placeholder="Title.." required/>
 
