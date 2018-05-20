@@ -26,7 +26,8 @@ module.exports = {
     // uses "src" folder as a starting point
     devServer: {
         contentBase: paths.SRC,
-        historyApiFallback: true
+        historyApiFallback: true,
+        port: 8081
     },
     module: {
         rules: [
