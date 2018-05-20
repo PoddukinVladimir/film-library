@@ -16,7 +16,6 @@ module.exports = {
         filename: 'index.bundle.js',
         publicPath: '/'
     },
-    devtool: "source-map",
     plugins: [
         new HtmlWebpackPlugin({
             template: path.join(paths.SRC, 'index.html'),
