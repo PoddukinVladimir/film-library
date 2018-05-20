@@ -111,7 +111,7 @@ app.post('/upload/file', (request, response) => {
     });
 });
 
-app.delete('/', jsonParser, (request, response) => {
+app.delete('/films', jsonParser, (request, response) => {
     let id = request.body.id;
 
     let dataBaseInstance = new dataBase();

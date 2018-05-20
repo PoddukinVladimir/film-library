@@ -87,7 +87,7 @@ class Films extends Component {
     };
 
     deleteFilm = (id) => {
-        const url = 'http://localhost:3000/';
+        const url = 'http://localhost:3000/films';
 
         fetch(url, {
             method: 'DELETE',
