@@ -95,7 +95,7 @@ class AddFilm extends Component {
                                   onChange={this.onChangeHandler} id="actors"
                                   value={this.state.actors} cols="30" rows="10" required/>
 
-                        <button type="submit">Add</button>
+                        <button className="button-redactor button-redactor--green" type="submit">Add</button>
                     </div>
                 </form>
             </div>

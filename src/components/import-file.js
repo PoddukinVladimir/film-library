@@ -17,7 +17,9 @@ class ImportFile extends Component {
         return (
             <form className="form" onSubmit={this.submitFile}>
                 <input id="file" type="file" name="file"/>
-                <button type="submit">Send file</button>
+                <div className="import-file-button">
+                    <button className="button-redactor button-redactor--blue" type="submit">Import file</button>
+                </div>
             </form>
         )
     }

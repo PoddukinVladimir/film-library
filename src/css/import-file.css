@@ -1,3 +1,12 @@
 .form {
     text-align: center;
+    margin-top: 25px;
+}
+
+.import-file-button {
+    display: inline-block;
+}
+
+.button-redactor--green {
+    background-color: #72C067;
 }
